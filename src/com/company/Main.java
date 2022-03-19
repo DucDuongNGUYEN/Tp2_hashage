@@ -2,35 +2,29 @@ package com.company;
 import java.io.*;
 import java.util.*;
 
+
 public class Main {
     private final static String FILE_URL = "C:\\LICENCE 2\\S4\\Algorithmique 1\\dico.txt";
-    private static final Hashtable<String,ArrayList<Character>> dictionary = new Hashtable<>();
+    private static final Hashtable<ArrayList<Character>, ArrayList<String>> dictionary = new Hashtable<>();
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         //test
-
-        System.out.println(search(creationDictionary(),"apennins"));
-        //System.out.println(creationDictionary());
-//---------------------------------------------------------------
-/*  public static void main(String[] args) throws IOException {
-        File file = new File(FILE_URL);
-        InputStream inputStream = new FileInputStream(file);
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        BufferedReader reader = new BufferedReader(inputStreamReader);
-
-        //ajouter des mots en dictionnaire
-        String line;
-        while((line = reader.readLine())!= null)
-        {
-            dictionary.put(line.toLowerCase(Locale.ROOT),splitString(line.toLowerCase(Locale.ROOT)));
-        }
-        System.out.println(dictionary);
-
- */
+        search(creationDictionary(), "giseleherve");
+        //System.out.println(search(creationDictionary(), "duong")); //mongoliemonod
+        //System.out.println(creationDictionary().values());
+        //System.out.println(findComplement(sortList(""),"mongolie"));
+        //System.out.println(sortList("mongolie"));
     }
+
+    public static ArrayList<Character> sortList(String line) {
+        ArrayList<Character> newList = splitString(line);
+        Collections.sort(newList);
+        return newList;
+    }
+
     //Créer un dictionnaire
-    public static Hashtable<String,ArrayList<Character>> creationDictionary(){
+    public static Hashtable<ArrayList<Character>, ArrayList<String>> creationDictionary() {
         try {
             File file = new File(FILE_URL);
             InputStream inputStream = new FileInputStream(file);
@@ -39,76 +33,83 @@ public class Main {
 
             //ajouter des mots en dictionnaire
             String line;
-            while((line = reader.readLine())!= null)
-            {
-                dictionary.put(line.toLowerCase(Locale.ROOT),splitString(line.toLowerCase(Locale.ROOT)));
+            while ((line = reader.readLine()) != null) {
+                ArrayList<String> value = new ArrayList<>();
+                line = line.toLowerCase();
+                ArrayList<Character> key = sortList(line);
+                if (dictionary.containsKey(key)) {
+                    dictionary.get(key).add(line);
+                } else {
+                    value.add(line);
+                    dictionary.put(key, value);
+                }
             }
-        }
-        catch (IOException ex){
+        } catch (IOException ex) {
             System.out.println("Error : unable to record file :" + ex);
         }
         return dictionary;
     }
+
     //Découper des suites
-    public static ArrayList<Character> splitString(String word){
-         ArrayList<Character> value = new ArrayList<>();
-        for (int i = 0; i < word.length(); i++){
-            value.add(word.charAt(i));
+    public static ArrayList<Character> splitString(String word) {
+        ArrayList<Character> key = new ArrayList<>();
+        for (int i = 0; i < word.length(); i++) {
+            key.add(word.charAt(i));
         }
-        return value;
+        return key;
     }
-    public static ArrayList<Character> findComplement(String request_1, String word){   // request : mot requête, w2 : un mot en dictionnaire
-        ArrayList<Character> request = splitString(request_1);
+
+    public static ArrayList<Character> findComplement(ArrayList<Character> request, String word) {   // request : mot requête, w2 : un mot en dictionnaire
+        //ArrayList<Character> request = splitString(request_1);
         ArrayList<Character> w2 = splitString(word);
         ArrayList<Character> rest = new ArrayList<>();
-        int i =0, j=0, k=0;
-        while (i < request.size() && j < w2.size()){
-            if ((request.get(i)).equals(w2.get(j))){
-                //rest.add(request.get(i));
+        Collections.sort(request);
+        Collections.sort(w2);
+        int i = 0, j = 0, k = 0;
+
+        while (i < request.size() && j < w2.size()) {
+            if (request.get(i) == w2.get(j)) {
                 i++;
                 j++;
-
             }
-            if (request.get(i) < w2.get(j)){
-                rest.add(k,request.get(i));
+
+            if (!(i < request.size() && j < word.length())) break;
+            if (request.get(i) < w2.get(j)) {
+                rest.add(k, request.get(i));
                 i++;
                 k++;
             }
-            else {
-                while (i < request.size()){
-                    rest.add(k,request.get(i));
-                    i++;
-                    k++;
-                }
+            if (!(i < request.size())) break;
+
+            if (request.get(i) > w2.get(j)) {
+                j++;
+            }
+            if (!(j < w2.size())) break;
+
+        }
+        if (j < w2.size()) {
+            return rest;
+        } else {
+            while (i < request.size()) {
+                rest.add(k, request.get(i));
+                i++;
+                k++;
             }
         }
         return rest;
     }
-    public static ArrayList<String> search(Hashtable<String, ArrayList<Character>> dict, String request){
-        ArrayList<String> content = new ArrayList<>();
-        for (String element :dictionary.keySet()){
-            if (dictionary.containsValue(findComplement(request,element))){
-                if (checkElementsOfValue(dictionary.get(element),findComplement(request,element))){
-                    content.add(element);
+
+    public static void search(Hashtable<ArrayList<Character>, ArrayList<String>> dict, String request) {
+        ArrayList<Character> req = sortList(request);
+        for (ArrayList<Character> key : dict.keySet()) {
+            if (req.containsAll(key)){
+                ArrayList<Character> complement = findComplement(req, String.valueOf(dict.get(key)));
+                if (dict.containsKey(complement)){
+                    if ((key.size() + complement.size()) == req.size()){
+                        System.out.println(request + " - " + dict.get(key) + " = " + dict.get(complement));
+                    }
                 }
             }
-            else {
-                System.out.println("Error : not find the word");
-                break;
-            }
         }
-        return content;
     }
-    public static boolean checkElementsOfValue(ArrayList<Character> list1, ArrayList<Character> list2){
-        for (int i = 0; i < list1.size(); i++){
-            if (!list1.contains(list2.get(i))){
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-
-
 }
