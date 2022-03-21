@@ -10,10 +10,10 @@ public class Main {
     public static void main(String[] args) {
 
         //test
-        search(creationDictionary(), "giseleherve");
+        search(creationDictionary(), "giseleherve"); //giseleherve
         //System.out.println(search(creationDictionary(), "duong")); //mongoliemonod
         //System.out.println(creationDictionary().values());
-        //System.out.println(findComplement(sortList(""),"mongolie"));
+        //System.out.println(findComplement(sortList("giseleherve"),"gisele"));
         //System.out.println(sortList("mongolie"));
     }
 
@@ -60,7 +60,6 @@ public class Main {
     }
 
     public static ArrayList<Character> findComplement(ArrayList<Character> request, String word) {   // request : mot requête, w2 : un mot en dictionnaire
-        //ArrayList<Character> request = splitString(request_1);
         ArrayList<Character> w2 = splitString(word);
         ArrayList<Character> rest = new ArrayList<>();
         Collections.sort(request);
@@ -105,11 +104,17 @@ public class Main {
             if (req.containsAll(key)){
                 ArrayList<Character> complement = findComplement(req, String.valueOf(dict.get(key)));
                 if (dict.containsKey(complement)){
-                    if ((key.size() + complement.size()) == req.size()){
+                    if (verifyList(req,key,complement)){
                         System.out.println(request + " - " + dict.get(key) + " = " + dict.get(complement));
                     }
                 }
             }
         }
+    }
+    public static boolean verifyList(ArrayList<Character> request,ArrayList<Character> key,ArrayList<Character> complement){
+        ArrayList<Character> listConcatenate = new ArrayList<>(key);
+        listConcatenate.addAll(complement);
+        Collections.sort(listConcatenate);
+        return listConcatenate.equals(request);
     }
 }
