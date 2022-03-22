@@ -10,10 +10,10 @@ public class Main {
     public static void main(String[] args) {
 
         //test
-        search(creationDictionary(), "giseleherve"); //giseleherve
+        search(creationDictionary(), "bravitude"); //giseleherve,bravitude
         //System.out.println(search(creationDictionary(), "duong")); //mongoliemonod
-        //System.out.println(creationDictionary().values());
-        //System.out.println(findComplement(sortList("giseleherve"),"gisele"));
+        //System.out.println(creationDictionary().keySet());
+        //System.out.println(findComplement(sortList("giseleherve"),"herve"));
         //System.out.println(sortList("mongolie"));
     }
 
